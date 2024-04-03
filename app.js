@@ -45,14 +45,13 @@ mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
   })
-  .then(() =>
-    console.log(
-      "==============Mongodb Database Connected Successfully=============="
-    )
-  )
-  .catch((err) => console.log("Database Not Connected !!!"));
+  .then(console.log(`DB got connected`))
+  .catch((error) => {
+    console.log("DB CONNECTION ISSUES");
+    console.log(error);
+    // process.exit(1);
+  });
 
 // Middleware
 app.use(morgan("dev"));
@@ -69,7 +68,6 @@ app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
 app.use("/api", brainTreeRouter);
 app.use("/api/Send-email", send);
-
 
 app.use("/api/order", orderRouter);
 app.use("/api/customize", customizeRouter);

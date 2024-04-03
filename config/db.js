@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
-try {
-  mongoose.connect("mongodb://localhost:27017/Ecommerce", {
+mongoose
+  .connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
+  })
+  .then(console.log(`DB got connected`))
+  .catch((error) => {
+    console.log("DB CONNECTION ISSUES");
+    console.log(error);
+    process.exit(1);
   });
-  console.log("Database Connected Successfully");
-} catch (err) {
-  console.log("Database Not Connected");
-}

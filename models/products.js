@@ -62,5 +62,5 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const productModel = mongoose.model("pets", productSchema);
+const productModel = mongoose.model("products", productSchema);
 module.exports = productModel;

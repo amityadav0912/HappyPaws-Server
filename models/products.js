@@ -27,10 +27,18 @@ const productSchema = new mongoose.Schema(
       type: ObjectId,
       ref: "categories",
     },
-    pImages: {
-      type: Array,
-      required: true,
-    },
+    photos: [
+      {
+        id: {
+          type: String,
+          required: true,
+        },
+        secure_url: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
     pOffer: {
       type: String,
       default: null,
@@ -54,5 +62,5 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const productModel = mongoose.model("products", productSchema);
+const productModel = mongoose.model("pets", productSchema);
 module.exports = productModel;

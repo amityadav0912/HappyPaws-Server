@@ -2,8 +2,15 @@ const mongoose = require("mongoose");
 
 const customizeSchema = new mongoose.Schema(
   {
-    slideImage: {
-      type: String,
+    photos: {
+      id: {
+        type: String,
+        required: true,
+      },
+      secure_url: {
+        type: String,
+        required: true,
+      },
     },
     firstShow: {
       type: Number,

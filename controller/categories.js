@@ -1,5 +1,7 @@
 const { toTitleCase } = require("../config/function");
 const categoryModel = require("../models/categories");
+const cloudinary = require("cloudinary"); // Import Cloudinary SDK
+
 const fs = require("fs");
 
 class Category {
@@ -17,6 +19,7 @@ class Category {
   async postAddCategory(req, res) {
     let { cName, cDescription, cStatus } = req.body;
     let cImage = req.file.filename;
+    console.log(cImage);
     const filePath = `../server/public/uploads/categories/${cImage}`;
 
     if (!cName || !cDescription || !cStatus || !cImage) {
@@ -38,11 +41,20 @@ class Category {
             return res.json({ error: "Category already exists" });
           });
         } else {
+          let result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "category",
+          });
+
+          let categoryImage = {
+            id: result.public_id,
+            secure_url: result.secure_url,
+          };
+
           let newCategory = new categoryModel({
             cName,
             cDescription,
             cStatus,
-            cImage,
+            photos: categoryImage,
           });
           await newCategory.save((err) => {
             if (!err) {
@@ -87,7 +99,7 @@ class Category {
 
         let deleteCategory = await categoryModel.findByIdAndDelete(cId);
         if (deleteCategory) {
-          // Delete Image from uploads -> categories folder 
+          // Delete Image from uploads -> categories folder
           fs.unlink(filePath, (err) => {
             if (err) {
               console.log(err);

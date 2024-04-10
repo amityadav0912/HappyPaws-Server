@@ -15,6 +15,7 @@ role: 0 or by default it for customer signup.
 go user model and see the role field.
 
 */
+const cloudinary = require("cloudinary");
 
 const express = require("express");
 const app = express();
@@ -52,6 +53,12 @@ mongoose
     console.log(error);
     // process.exit(1);
   });
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Middleware
 app.use(morgan("dev"));

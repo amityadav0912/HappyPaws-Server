@@ -1,6 +1,7 @@
 const productModel = require("../models/products");
 const fs = require("fs");
 const path = require("path");
+const cloudinary = require("cloudinary"); // Import Cloudinary SDK
 
 class Product {
   // Delete Image from uploads -> products folder
@@ -41,6 +42,7 @@ class Product {
     }
   }
 
+  // Define your postAddProduct function
   async postAddProduct(req, res) {
     let { pName, pDescription, pPrice, pQuantity, pCategory, pOffer, pStatus } =
       req.body;
@@ -71,12 +73,27 @@ class Product {
       return res.json({ error: "Must need to provide 2 images" });
     } else {
       try {
-        let allImages = [];
-        for (const img of images) {
-          allImages.push(img.filename);
+        let imageArray = [];
+        for (let index = 0; index < req.files.length; index++) {
+          try {
+            let result = await cloudinary.uploader.upload(
+              req.files[index].path,
+              {
+                folder: "fitness", // Set the folder where you want to store the images
+              }
+            );
+            imageArray.push({
+              id: result.public_id,
+              secure_url: result.secure_url,
+            });
+          } catch (error) {
+            console.error("Error uploading image:", error);
+            // Handle error if needed
+          }
         }
+
         let newProduct = new productModel({
-          pImages: allImages,
+          photos: imageArray,
           pName,
           pDescription,
           pPrice,
@@ -105,7 +122,7 @@ class Product {
       pCategory,
       pOffer,
       pStatus,
-      pImages,
+      photos,
     } = req.body;
     let editImages = req.files;
 
@@ -144,12 +161,28 @@ class Product {
       };
       if (editImages.length == 2) {
         let allEditImages = [];
-        for (const img of editImages) {
-          allEditImages.push(img.filename);
+
+        for (let index = 0; index < req.files.length; index++) {
+          try {
+            let result = await cloudinary.uploader.upload(
+              req.files[index].path,
+              {
+                folder: "fitness", // Set the folder where you want to store the images
+              }
+            );
+            allEditImages.push({
+              id: result.public_id,
+              secure_url: result.secure_url,
+            });
+          } catch (error) {
+            console.error("Error uploading image:", error);
+            // Handle error if needed
+          }
         }
-        editData = { ...editData, pImages: allEditImages };
-        Product.deleteImages(pImages.split(","), "string");
+        editData = { ...editData, photos: allEditImages };
+        // Product.deleteImages(photos.split(","), "string");
       }
+
       try {
         let editProduct = productModel.findByIdAndUpdate(pId, editData);
         editProduct.exec((err) => {

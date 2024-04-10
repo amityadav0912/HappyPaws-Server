@@ -3,6 +3,8 @@ const categoryModel = require("../models/categories");
 const productModel = require("../models/products");
 const orderModel = require("../models/orders");
 const userModel = require("../models/users");
+const cloudinary = require("cloudinary"); // Import Cloudinary SDK
+
 const customizeModel = require("../models/customize");
 
 class Customize {
@@ -10,6 +12,7 @@ class Customize {
     try {
       let Images = await customizeModel.find({});
       if (Images) {
+        // console.log(Images);
         return res.json({ Images });
       }
     } catch (err) {
@@ -23,8 +26,18 @@ class Customize {
       return res.json({ error: "All field required" });
     }
     try {
+      console.log(req.file);
+      let result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "slider", // Set the folder where you want to store the images
+      });
+
+      let slideImage = {
+        id: result.public_id,
+        secure_url: result.secure_url,
+      };
+
       let newCustomzie = new customizeModel({
-        slideImage: image,
+        photos: slideImage,
       });
       let save = await newCustomzie.save();
       if (save) {

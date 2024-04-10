@@ -10,8 +10,15 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    cImage: {
-      type: String,
+    photos: {
+      id: {
+        type: String,
+        required: true,
+      },
+      secure_url: {
+        type: String,
+        required: true,
+      },
     },
     cStatus: {
       type: String,
